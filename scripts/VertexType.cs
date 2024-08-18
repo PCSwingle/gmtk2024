@@ -16,7 +16,7 @@ public static class VertexTypes {
     public static readonly VertexType IronMine = new("Iron Mine", new Color("8d7d6f"), [], ["Iron Ore"],
         [Recipes.IronMineRecipe]);
 
-    public static readonly VertexType Smeltery = new("Smeltery", new Color("616161"), ["Ore"], ["Ingot"],
+    public static readonly VertexType Smelter = new("Smelter", new Color("616161"), ["Ore"], ["Ingot"],
         [Recipes.SmeltingRecipe]);
 
     public static readonly VertexType Splitter = new("Splitter", ControlVertexColor, [""], ["", ""],

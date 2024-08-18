@@ -27,8 +27,8 @@ public partial class Command : Node2D {
         control.GuiInput += this._GuiInput;
 
         this._zoomNode.AddChild(Vertex.CreateVertex(VertexTypes.IronMine));
-        this._zoomNode.AddChild(Vertex.CreateVertex(VertexTypes.Smeltery));
-        this._zoomNode.AddChild(Vertex.CreateVertex(VertexTypes.Smeltery));
+        this._zoomNode.AddChild(Vertex.CreateVertex(VertexTypes.Smelter));
+        this._zoomNode.AddChild(Vertex.CreateVertex(VertexTypes.Smelter));
         this._zoomNode.AddChild(Vertex.CreateVertex(VertexTypes.Splitter));
         this._zoomNode.AddChild(Vertex.CreateVertex(VertexTypes.Merger));
     }

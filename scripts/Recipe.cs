@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using GMTK2024.scenes;
 
 namespace GMTK2024.scripts;
@@ -55,31 +56,65 @@ public class Recipe(List<(Resource, int)>? recipeInputs = null, List<(Resource, 
         return true;
     }
 
+    private List<(VertexIO, int)>? _GetSiphons(List<VertexIO> vs, bool siphoning) {
+        Dictionary<Resource, List<VertexIO>> sortedVs = [];
+        Dictionary<Resource, int> amounts = [];
+        var siphoningFor = siphoning ? this._recipeInputs : this._recipeOutputs;
+        for (var i = 0; i < siphoningFor.Count; i++) {
+            var (res, amount) = siphoningFor[i];
+            if (!sortedVs.ContainsKey(res)) {
+                sortedVs[res] = [];
+                amounts[res] = 0;
+            }
+
+            sortedVs[res].Add(vs[i]);
+            amounts[res] += amount;
+        }
+
+        List<(VertexIO, int)> allSiphons = [];
+        foreach (var res in sortedVs.Keys) {
+            // Try to split it evenly, but always give all if possible
+            (VertexIO, int)[] siphons = [..sortedVs[res].Select(vertexIo => (vertexIo, 0))];
+            var amount = amounts[res];
+            while (amount > 0) {
+                var lastAmount = amount;
+                for (var i = 0; i < siphons.Length; i++) {
+                    var (v, alreadySiphoned) = siphons[i];
+                    var remaining = (siphoning ? v.Storage : VertexIO.MaxStorage - v.Storage) - alreadySiphoned;
+                    if (remaining > 0) {
+                        amount -= 1;
+                        siphons[i] = (v, alreadySiphoned + 1);
+                    }
+                }
+
+                if (lastAmount == amount) {
+                    return null;
+                }
+            }
+
+            allSiphons.AddRange(siphons);
+        }
+
+        return allSiphons;
+    }
+
     public virtual bool Process(List<VertexIO> inputs, List<VertexIO> outputs) {
         // Assume already matched
 
-        // Check for blockages
-        // TODO: If multiple inputs with same resource, ok taking all from one
-        for (var i = 0; i < this._recipeInputs.Count; i++) {
-            if (inputs[i].Storage < this._recipeInputs[i].Item2) {
-                return false;
-            }
-        }
-
-        // TODO: If multiple outputs with same resource, ok sending all to one
-        for (var i = 0; i < this._recipeOutputs.Count; i++) {
-            if (VertexIO.MaxStorage - outputs[i].Storage < this._recipeOutputs[i].Item2) {
-                return false;
-            }
+        // Check for blockage
+        var allSiphons = this._GetSiphons(inputs, true);
+        var allDumps = this._GetSiphons(outputs, false);
+        if (allSiphons == null || allDumps == null) {
+            return false;
         }
 
         // Process recipe
-        for (var i = 0; i < this._recipeInputs.Count; i++) {
-            inputs[i].Storage -= this._recipeInputs[i].Item2;
+        foreach (var (v, amount) in allSiphons) {
+            v.Storage -= amount;
         }
 
-        for (var i = 0; i < this._recipeOutputs.Count; i++) {
-            outputs[i].Storage += this._recipeOutputs[i].Item2;
+        foreach (var (v, amount) in allDumps) {
+            v.Storage += amount;
         }
 
         return true;
@@ -89,6 +124,6 @@ public class Recipe(List<(Resource, int)>? recipeInputs = null, List<(Resource, 
 public static class Recipes {
     public static readonly Recipe IronMineRecipe = new([], [(Resources.IronOre, 4)]);
     public static readonly Recipe SmeltingRecipe = new([(Resources.Ore, 2)], [(Resources.Ore, 1)]);
-    public static readonly Recipe SplittingRecipe = new([(Resources.Any, 2)], [(Resources.Any, 1), (Resources.Any, 1)]);
-    public static readonly Recipe MergingRecipe = new([(Resources.Any, 1), (Resources.Any, 1)], [(Resources.Any, 2)]);
+    public static readonly Recipe SplittingRecipe = new([(Resources.Any, 6)], [(Resources.Any, 3), (Resources.Any, 3)]);
+    public static readonly Recipe MergingRecipe = new([(Resources.Any, 3), (Resources.Any, 3)], [(Resources.Any, 6)]);
 }

@@ -6,7 +6,7 @@ namespace GMTK2024.scenes;
 // ReSharper disable once InconsistentNaming
 public partial class VertexIO : Node2D {
     private const int Gap = 2;
-    public const int MaxStorage = 100;
+    public const int MaxStorage = 30;
     private const int TransferRate = 5;
 
     private static VertexIO? _hoveredVertexIo;
