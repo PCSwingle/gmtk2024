@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://dnqikohun242x"]
+
+[ext_resource type="Script" path="res://scenes/VertexLine.cs" id="1_jrqpq"]
+
+[node name="VertexLine" type="Line2D"]
+show_behind_parent = true
+z_index = -2
+z_as_relative = false
+width = 7.0
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+script = ExtResource("1_jrqpq")
+
+[node name="ArrowContainer" type="Node2D" parent="."]

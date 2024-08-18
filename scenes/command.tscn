@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5frxjy8nxyji"]
+
+[ext_resource type="Script" path="res://scenes/Command.cs" id="1_6843n"]
+
+[node name="Command" type="Node2D"]
+clip_children = 1
+script = ExtResource("1_6843n")
+
+[node name="CommandControl" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -500.0
+offset_top = -500.0
+offset_right = 500.0
+offset_bottom = 500.0
+mouse_filter = 1
+
+[node name="ZoomContainer" type="Control" parent="."]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 0
+offset_left = -500.0
+offset_top = -500.0
+offset_right = 500.0
+offset_bottom = 500.0
+mouse_filter = 2
+
+[node name="Zoom" type="Node2D" parent="ZoomContainer"]
+position = Vector2(500, 500)

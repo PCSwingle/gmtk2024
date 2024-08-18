@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://dvfr3q4exst0g"]
+
+[ext_resource type="Script" path="res://scenes/VertexIO.cs" id="1_spx14"]
+[ext_resource type="Texture2D" uid="uid://dd0w4yhnnrrjj" path="res://sprites/vertexio.png" id="2_qswy4"]
+[ext_resource type="Theme" uid="uid://cthxja25cp7h6" path="res://themes/DefaultTheme.tres" id="3_ykebc"]
+[ext_resource type="FontFile" uid="uid://d4h8qqjtwx3ho" path="res://themes/m3x6.ttf" id="4_tslfg"]
+[ext_resource type="Texture2D" uid="uid://bxa5jjd8afuwj" path="res://sprites/storage.png" id="5_1yqs6"]
+
+[node name="VertexIO" type="Node2D"]
+z_index = -1
+script = ExtResource("1_spx14")
+
+[node name="VertexIOControl" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -14.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = 14.0
+mouse_filter = 1
+mouse_default_cursor_shape = 2
+
+[node name="VertexIOSprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_qswy4")
+
+[node name="VertexIOLabel" type="Label" parent="."]
+z_index = 1
+offset_right = 1.0
+offset_bottom = 26.0
+theme = ExtResource("3_ykebc")
+theme_override_fonts/font = ExtResource("4_tslfg")
+
+[node name="VertexIOResourceSprite" type="Sprite2D" parent="."]
+visible = false
+z_index = 1
+
+[node name="VertexIoStorageSprite" type="Sprite2D" parent="."]
+visible = false
+z_index = 1
+texture = ExtResource("5_1yqs6")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 8, 16)
