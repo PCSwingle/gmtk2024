@@ -11,11 +11,11 @@ public static class Palette {
     public static readonly Color InvalidColor = new("770001");
 
     // Vertex Colors
-    public static readonly Color VertexControlColor = new("f9a31b");
-    public static readonly Color IronMineColor = new("8d7d6f");
-    public static readonly Color SmelterColor = new("616161");
-    public static readonly Color ConstructionColor = new("cc7f1b");
-    public static readonly Color TreasuryColor = new("fffc40");
+    public static readonly Color ConstructionColor = new("913a07");
+    public static readonly Color MaterialProducersColor = new("8d7d6f");
+    public static readonly Color LogisticsColor = new("dbc700");
+    public static readonly Color ManufacturingColor = new("616161");
+    public static readonly Color MoneyColor = new("fffc40");
 
     public static Color FillGradient(float weight) {
         return FillEmpty.Lerp(

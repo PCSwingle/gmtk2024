@@ -8,6 +8,7 @@ public partial class VertexProgress : Node2D {
 
     public override void _Ready() {
         this._progressBar = this.GetNode<Sprite2D>("ProgressSprite");
+        this.UpdateProgress(0f);
     }
 
     public void UpdateProgress(float progress) {

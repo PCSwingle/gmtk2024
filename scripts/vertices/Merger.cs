@@ -5,7 +5,7 @@ namespace GMTK2024.scripts.vertices;
 
 public class Merger() : VertexType(
     "Merger",
-    Palette.VertexControlColor,
+    Palette.LogisticsColor,
     ["Input", "Input"],
     ["Output"],
     [new MergingRecipe()]

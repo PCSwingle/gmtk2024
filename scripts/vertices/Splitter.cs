@@ -5,7 +5,7 @@ namespace GMTK2024.scripts.vertices;
 
 public class Splitter() : VertexType(
     "Splitter",
-    Palette.VertexControlColor,
+    Palette.LogisticsColor,
     ["Input"],
     ["Output", "Output"],
     [new SplittingRecipe()]

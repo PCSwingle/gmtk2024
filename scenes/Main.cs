@@ -15,6 +15,7 @@ public partial class Main : Node2D {
     private float _remainingTickTime;
 
     public override void _Ready() {
+        GD.Randomize();
         MainNode = this;
     }
 

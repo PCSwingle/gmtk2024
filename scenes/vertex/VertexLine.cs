@@ -17,10 +17,10 @@ public partial class VertexLine : Line2D {
 
 
     private static readonly PackedScene VertexLineScene =
-        ResourceLoader.Load<PackedScene>("res://scenes/vertex_line.tscn");
+        ResourceLoader.Load<PackedScene>("res://scenes/vertex/vertex_line.tscn");
 
     private static readonly PackedScene ConnectionArrowScene =
-        ResourceLoader.Load<PackedScene>("res://scenes/connection_arrow.tscn");
+        ResourceLoader.Load<PackedScene>("res://scenes/vertex/connection_arrow.tscn");
 
     private readonly HashSet<ConnectionArrow> _arrows = new();
     private int _curSteps = StepsPerArrow - 1;

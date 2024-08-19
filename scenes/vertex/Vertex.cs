@@ -10,15 +10,19 @@ public partial class Vertex : Node2D {
         ResourceLoader.Load<PackedScene>("res://scenes/vertex/vertex.tscn");
 
     public static readonly List<Vertex> FocusOrder = new();
+
+    private bool _dirty = true;
+    private Recipe? _curRecipe;
+
+    private VertexType _type = null!;
     private readonly List<VertexIO> _inputs = new();
     private readonly List<VertexIO> _outputs = new();
 
-    private Recipe? _curRecipe;
-    private bool _dirty = true;
     private bool _dragging;
     private Vector2 _dragLocation;
     private Vector2 _lastMousePosition;
-    private VertexType _type = null!;
+
+    public Dictionary<string, object> Metadata = [];
 
     private static void Refocus() {
         for (var i = 0; i < FocusOrder.Count; i++) {
@@ -57,7 +61,10 @@ public partial class Vertex : Node2D {
         var control = this.GetNode<Control>("VertexControl");
         control.GuiInput += this._GuiInput;
 
-        FocusOrder.Add(this);
+        FocusOrder.Insert(
+            0,
+            this
+        );
         Refocus();
         this._type.Ready();
     }

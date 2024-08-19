@@ -1,6 +1,6 @@
 namespace GMTK2024.scripts.recipes;
 
-public class ConstructionPlannerRecipe() : Recipe(
+public class LogisticsPlannerRecipe() : Recipe(
     [(Resources.Coin, 1)],
     []
 ) { }

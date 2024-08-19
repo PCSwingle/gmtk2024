@@ -7,7 +7,7 @@ namespace GMTK2024.scripts.vertices;
 
 public class Treasury() : VertexType(
     "Treasury",
-    Palette.TreasuryColor,
+    Palette.MoneyColor,
     [],
     ["Coin"],
     [new TreasuryRecipe()]

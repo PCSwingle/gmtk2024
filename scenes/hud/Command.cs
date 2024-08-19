@@ -23,13 +23,14 @@ public partial class Command : Node2D {
     private Node2D _zoomNode = null!;
     private bool _zoomOut;
 
-    public static void CreateVertex(
+    public static Vertex CreateVertex(
         VertexType type,
         Vector2 position
     ) {
         var v = Vertex.CreateVertex(type);
         v.Position = position;
         Main.CommandNode._zoomNode.AddChild(v);
+        return v;
     }
 
     public override void _Ready() {
@@ -37,13 +38,10 @@ public partial class Command : Node2D {
         var control = this.GetNode<Control>("CommandControl");
         control.GuiInput += this._GuiInput;
 
-        this._zoomNode.AddChild(Vertex.CreateVertex(new IronMine()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new Smelter()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new Smelter()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new Splitter()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new Merger()));
+        this._zoomNode.AddChild(Vertex.CreateVertex(new ResourceProspector()));
         this._zoomNode.AddChild(Vertex.CreateVertex(new Treasury()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new ConstructionPlanner()));
+        this._zoomNode.AddChild(Vertex.CreateVertex(new LogisticsPlanner()));
+        this._zoomNode.AddChild(Vertex.CreateVertex(new ManufacturingIndustry()));
 
         Main.CommandNode = this;
     }
@@ -82,15 +80,10 @@ public partial class Command : Node2D {
         if (e is InputEventMouseButton { Pressed: false, ButtonIndex: MouseButton.Middle or MouseButton.Left }) {
             this._dragging = false;
         }
-
-        if (this._dragging && e is InputEventMouseMotion me) {
-            this._zoomNode.Translate(me.Relative);
-            this._ClampPosition();
-        }
     }
 
     private void _GuiInput(InputEvent e) {
-        if (e is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Middle or MouseButton.Left }) {
+        if (e is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left }) {
             this._dragging = true;
         }
     }
@@ -102,22 +95,20 @@ public partial class Command : Node2D {
                     if (!this._zoomIn) {
                         this._zoomOut = true;
                     }
-
                     break;
                 case MouseButton.WheelDown:
                     if (!this._zoomOut) {
                         this._zoomIn = true;
                     }
-
                     break;
                 case MouseButton.Middle:
                     var mousePosition = this.ToLocal(me.GlobalPosition);
-                    if (mousePosition.X is < RealSize / 2 and > -(RealSize / 2) && mousePosition.Y is < RealSize / 2
-                            and > -
-                                (RealSize / 2)) {
+                    if (
+                        mousePosition.X is < RealSize / 2 and > -(RealSize / 2) &&
+                        mousePosition.Y is < RealSize / 2 and > -(RealSize / 2)) {
                         this._dragging = true;
                     }
-
+                    this.GetViewport().SetInputAsHandled();
                     break;
                 default:
                     return;
@@ -130,6 +121,11 @@ public partial class Command : Node2D {
 
             this._zoomIn = false;
             this._zoomOut = false;
+        }
+
+        if (this._dragging && e is InputEventMouseMotion mem) {
+            this._zoomNode.Translate(mem.Relative);
+            this._ClampPosition();
         }
     }
 

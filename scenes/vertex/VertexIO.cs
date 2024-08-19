@@ -56,7 +56,7 @@ public partial class VertexIO : Node2D {
         if (Resources.RegisteredResources.TryGetValue(
                 this._defaultLabel,
                 out var resource
-            )) {
+            ) && !(resource.Sprite is PlaceholderTexture2D)) {
             this.SetResource(
                 resource,
                 false

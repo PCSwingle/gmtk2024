@@ -14,12 +14,11 @@ public readonly struct Resource {
         Func<Resource, Resource?>? match = null
     ) {
         this.Name = name;
-        this.Sprite = match == null
-            ? Utils.LoadSprite(
-                name,
-                "resources"
-            )
-            : new PlaceholderTexture2D();
+        this.Sprite = Utils.LoadSprite(
+            name,
+            "resources",
+            match != null
+        );
         this._match = match;
 
         Resources.RegisteredResources[name] = this;
