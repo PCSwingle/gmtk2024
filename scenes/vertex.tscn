@@ -41,3 +41,11 @@ offset_bottom = 27.0
 theme = ExtResource("4_ka43a")
 autowrap_mode = 2
 clip_text = true
+
+[node name="VertexBody" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_top = 32.0
+offset_bottom = 32.0
+mouse_filter = 2
+theme = ExtResource("4_ka43a")

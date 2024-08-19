@@ -10,6 +10,7 @@ public readonly struct Resource(string name, Func<Resource, Resource?>? match = 
         ? ResourceLoader.Load<CompressedTexture2D>($"res://sprites/resources/{name.ToLower().Replace(" ", "_")}.png")
         : new PlaceholderTexture2D();
 
+
     public Resource? MatchResource(Resource? res) {
         if (res == null || match == null) {
             return this == res ? this : null;
@@ -40,9 +41,13 @@ public readonly struct Resource(string name, Func<Resource, Resource?>? match = 
 }
 
 public static class Resources {
+    // Resources
     public static readonly Resource IronOre = new("Iron Ore");
     public static readonly Resource Iron = new("Iron");
+    public static readonly Resource Coin = new("Coin");
 
+
+    // Resource Matchers
     public static readonly Resource Any = new("Any", res => res);
 
     public static readonly Resource Ore = new("Ore", res => {

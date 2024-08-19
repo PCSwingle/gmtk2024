@@ -1,3 +1,4 @@
+using GMTK2024.scripts;
 using Godot;
 using Resource = GMTK2024.scripts.Resource;
 
@@ -6,16 +7,14 @@ namespace GMTK2024.scenes;
 // ReSharper disable once InconsistentNaming
 public partial class VertexIO : Node2D {
     private const int Gap = 2;
-    public const int MaxStorage = 30;
-    private const int TransferRate = 5;
+    public const int MaxStorage = 100;
+    public const int TransferRate = 5;
 
     private static VertexIO? _hoveredVertexIo;
 
     private static readonly PackedScene VertexIoScene =
         ResourceLoader.Load<PackedScene>("res://scenes/vertex_io.tscn");
 
-    private static readonly Color[] FillColors =
-        [new Color("005d32"), new Color("2e5933"), new Color("485230"), new Color("84292a")];
 
     private VertexLine? _dragLine;
 
@@ -116,7 +115,7 @@ public partial class VertexIO : Node2D {
         storageSprite.RegionRect = new Rect2(new Vector2(storageSprite.RegionRect.Position.X, pixelsMissing),
             new Vector2(storageSprite.RegionRect.Size.X, 16 - pixelsMissing));
 
-        var color = FillColors[pixelsMissing / 4];
+        var color = Palette.IoFillColors[pixelsMissing / 4];
         storageSprite.Modulate = color;
         sprite.Modulate = color;
     }

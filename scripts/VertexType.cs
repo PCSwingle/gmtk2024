@@ -1,27 +1,29 @@
+using GMTK2024.scenes;
 using Godot;
 
 namespace GMTK2024.scripts;
 
-public struct VertexType(string name, Color color, string[] inputLabels, string[] outputLabels, Recipe[] recipes) {
-    public readonly string Name = name;
+public abstract class VertexType(
+    string name,
+    Color color,
+    string[] inputLabels,
+    string[] outputLabels,
+    Recipe[] recipes
+) {
     public readonly Color Color = color;
     public readonly string[] InputLabels = inputLabels;
+    public readonly string Name = name;
     public readonly string[] OutputLabels = outputLabels;
     public readonly Recipe[] Recipes = recipes;
-}
+    public Vertex VertexNode = null!;
 
-public static class VertexTypes {
-    private static readonly Color ControlVertexColor = new("ded16d");
+    public virtual void Create() { }
+    public virtual void Ready() { }
+    public virtual void Delete() { }
 
-    public static readonly VertexType IronMine = new("Iron Mine", new Color("8d7d6f"), [], ["Iron Ore"],
-        [Recipes.IronMineRecipe]);
+    public virtual int AllowedMultiples() {
+        return 1;
+    }
 
-    public static readonly VertexType Smelter = new("Smelter", new Color("616161"), ["Ore"], ["Ingot"],
-        [Recipes.SmeltingRecipe]);
-
-    public static readonly VertexType Splitter = new("Splitter", ControlVertexColor, [""], ["", ""],
-        [Recipes.SplittingRecipe]);
-
-    public static readonly VertexType Merger = new("Merger", ControlVertexColor, ["", ""], [""],
-        [Recipes.MergingRecipe]);
+    public virtual void ProcessSideEffect(int multiple) { }
 }

@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://pcyt7elj8fbf"]
+
+[ext_resource type="Texture2D" uid="uid://ds1r5okqdja6d" path="res://sprites/resources/coin.png" id="1_xt3ox"]
+
+[node name="TreasuryBody" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="CoinSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_xt3ox")
+offset = Vector2(11, 17)
+
+[node name="CoinLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 1.0
+offset_right = 62.0
+offset_bottom = 24.0

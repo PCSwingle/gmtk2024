@@ -17,7 +17,7 @@ public partial class Vertex : Node2D {
     private bool _dragging;
     private Vector2 _dragLocation;
     private Vector2 _lastMousePosition;
-    private VertexType _type;
+    private VertexType _type = null!;
 
     private static void Refocus() {
         for (var i = 0; i < FocusOrder.Count; i++) {
@@ -29,30 +29,55 @@ public partial class Vertex : Node2D {
 
     public static Vertex CreateVertex(VertexType type) {
         var v = VertexScene.Instantiate<Vertex>();
-        v.GetNode<Label>("VertexLabel").Text = type.Name;
         v._type = type;
+        type.VertexNode = v;
+        v.GetNode<Label>("VertexLabel").Text = type.Name;
         v.GetNode<Node2D>("VertexSprites").Modulate = type.Color;
 
         foreach (var inputLabel in type.InputLabels) {
-            v._AddVertexIo(inputLabel, true);
+            v._AddVertexIo(
+                inputLabel,
+                true
+            );
         }
 
         foreach (var outputLabel in type.OutputLabels) {
-            v._AddVertexIo(outputLabel, false);
+            v._AddVertexIo(
+                outputLabel,
+                false
+            );
         }
 
+        v._type.Create();
         return v;
     }
 
     public override void _Ready() {
         var control = this.GetNode<Control>("VertexControl");
         control.GuiInput += this._GuiInput;
+
         FocusOrder.Add(this);
+        Refocus();
+        this._type.Ready();
     }
 
-    private void _AddVertexIo(string label, bool input) {
-        var v = VertexIO.CreateVertexIo(this, label, input);
-        v.Position = new Vector2(v.Position.X, 50 + 40 * (input ? this._inputs.Count : this._outputs.Count));
+    public override void _ExitTree() {
+        this._type.Delete();
+    }
+
+    private void _AddVertexIo(
+        string label,
+        bool input
+    ) {
+        var v = VertexIO.CreateVertexIo(
+            this,
+            label,
+            input
+        );
+        v.Position = new Vector2(
+            v.Position.X,
+            50 + 40 * (input ? this._inputs.Count : this._outputs.Count)
+        );
         this.AddChild(v);
         (input ? this._inputs : this._outputs).Add(v);
     }
@@ -67,7 +92,10 @@ public partial class Vertex : Node2D {
             this._curRecipe = null;
 
             foreach (var recipe in this._type.Recipes) {
-                if (recipe.Match(this._inputs, this._outputs)) {
+                if (recipe.Match(
+                        this._inputs,
+                        this._outputs
+                    )) {
                     this._curRecipe = recipe;
                     break;
                 }
@@ -75,7 +103,11 @@ public partial class Vertex : Node2D {
         }
 
         if (this._curRecipe != null) {
-            var succeeded = this._curRecipe.Process(this._inputs, this._outputs);
+            var succeeded = this._curRecipe.Process(
+                this._type,
+                this._inputs,
+                this._outputs
+            );
             this.GetNode<Sprite2D>("VertexSprites/VertexBodySprite").Modulate = Colors.White; // new Color("eab99a");
         } else {
             this.GetNode<Sprite2D>("VertexSprites/VertexBodySprite").Modulate = new Color("f9ada8");
@@ -95,8 +127,16 @@ public partial class Vertex : Node2D {
     private void _ClampPosition() {
         var halfSize = Command.CommandSize / 2;
         var control = this.GetNode<Control>("VertexControl");
-        this.Position = this.Position.Clamp(new Vector2(-halfSize, -halfSize),
-            new Vector2(halfSize - control.Size.X, halfSize - control.Size.Y));
+        this.Position = this.Position.Clamp(
+            new Vector2(
+                -halfSize,
+                -halfSize
+            ),
+            new Vector2(
+                halfSize - control.Size.X,
+                halfSize - control.Size.Y
+            )
+        );
     }
 
     public override void _UnhandledInput(InputEvent e) {

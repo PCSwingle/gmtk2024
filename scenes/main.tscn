@@ -3,11 +3,17 @@
 [ext_resource type="Script" path="res://scenes/Main.cs" id="1_0d3sg"]
 [ext_resource type="PackedScene" uid="uid://c5frxjy8nxyji" path="res://scenes/command.tscn" id="1_1tcys"]
 [ext_resource type="Texture2D" uid="uid://df55m6pvvcttt" path="res://sprites/overlay.png" id="3_oqkvv"]
-[ext_resource type="PackedScene" uid="uid://cwox244yptrs1" path="res://scenes/construction_overlay.tscn" id="4_o4awi"]
+[ext_resource type="PackedScene" uid="uid://cwox244yptrs1" path="res://scenes/hud.tscn" id="4_o4awi"]
 [ext_resource type="PackedScene" uid="uid://c7gs1plqgv63n" path="res://scenes/timebar.tscn" id="4_uvg1s"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_0d3sg")
+
+[node name="Hud" parent="." instance=ExtResource("4_o4awi")]
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="Command" parent="." instance=ExtResource("1_1tcys")]
 position = Vector2(540, 540)
@@ -20,9 +26,3 @@ centered = false
 [node name="Timebar" parent="." instance=ExtResource("4_uvg1s")]
 offset_left = 1652.0
 offset_right = 1920.0
-
-[node name="ConstructionOverlay" parent="." instance=ExtResource("4_o4awi")]
-offset_left = 40.0
-offset_top = 40.0
-offset_right = 40.0
-offset_bottom = 40.0

@@ -13,7 +13,7 @@ public partial class VertexLine : Line2D {
     }
 
     private const float ProtrusionLength = 25f;
-    private const float MoveTime = 0.1f;
+    private const float MoveTime = 0.03f;
     private const int StepsPerArrow = 15;
 
     public static readonly Color RegularColor = new("272727");
@@ -35,23 +35,50 @@ public partial class VertexLine : Line2D {
     private float _tillMove;
 
 
-    public static VertexLine CreateDragLine(VertexIO c1, Vector2 endPoint) {
+    public static VertexLine CreateDragLine(
+        VertexIO c1,
+        Vector2 endPoint
+    ) {
         var line = VertexLineScene.Instantiate<VertexLine>();
-        line.Points = GetDragPoints(c1, endPoint);
+        line.Points = GetDragPoints(
+            c1,
+            endPoint
+        );
         return line;
     }
 
-    public static Vector2[] GetDragPoints(VertexIO c1, Vector2 endPoint) {
+    public static Vector2[] GetDragPoints(
+        VertexIO c1,
+        Vector2 endPoint
+    ) {
         var curve = new Curve2D();
-        curve.AddPoint(Vector2.Zero, Vector2.Zero,
-            new Vector2(endPoint.X / 2, 0));
-        curve.AddPoint(endPoint, new Vector2(-endPoint.X / 2, 0));
+        curve.AddPoint(
+            Vector2.Zero,
+            Vector2.Zero,
+            new Vector2(
+                endPoint.X / 2,
+                0
+            )
+        );
+        curve.AddPoint(
+            endPoint,
+            new Vector2(
+                -endPoint.X / 2,
+                0
+            )
+        );
         return curve.GetBakedPoints();
     }
 
-    public static VertexLine CreateConnectionLine(VertexIO c1, VertexIO c2) {
+    public static VertexLine CreateConnectionLine(
+        VertexIO c1,
+        VertexIO c2
+    ) {
         var line = VertexLineScene.Instantiate<VertexLine>();
-        line.Points = GetConnectionPoints(c1, c2);
+        line.Points = GetConnectionPoints(
+            c1,
+            c2
+        );
         if (c1.IsInput == c2.IsInput) {
             line.SetStatus(Status.Invalid);
         }
@@ -59,9 +86,15 @@ public partial class VertexLine : Line2D {
         return line;
     }
 
-    public static Vector2[] GetConnectionPoints(VertexIO c1, VertexIO c2) {
+    public static Vector2[] GetConnectionPoints(
+        VertexIO c1,
+        VertexIO c2
+    ) {
         var c2Loc = c1.ToLocal(c2.GlobalPosition);
-        return GetDragPoints(c1, c2Loc);
+        return GetDragPoints(
+            c1,
+            c2Loc
+        );
     }
 
     private void _AddArrow(int index) {
@@ -103,8 +136,11 @@ public partial class VertexLine : Line2D {
         }
 
         if (this._tillMove > MoveTime) {
-            this._tillMove = Mathf.Min(this._tillMove - MoveTime, MoveTime);
-            AdjustArrows(true);
+            this._tillMove = Mathf.Min(
+                this._tillMove - MoveTime,
+                MoveTime
+            );
+            this.AdjustArrows(true);
 
             this._curSteps += 1;
             if (this._curSteps == StepsPerArrow) {
