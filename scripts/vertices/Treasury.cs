@@ -1,6 +1,7 @@
 using GMTK2024.scenes;
 using GMTK2024.scripts.recipes;
 using Godot;
+using VertexIO = GMTK2024.scenes.vertex.VertexIO;
 
 namespace GMTK2024.scripts.vertices;
 
@@ -12,7 +13,7 @@ public class Treasury() : VertexType(
     [new TreasuryRecipe()]
 ) {
     private static readonly PackedScene TreasuryBodyScene =
-        ResourceLoader.Load<PackedScene>("res://scenes/treasury_body.tscn");
+        ResourceLoader.Load<PackedScene>("res://scenes/vertices/treasury.tscn");
 
     private Hud.OnUpdateHudEventHandler _callback = null!;
 

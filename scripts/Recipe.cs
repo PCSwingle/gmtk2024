@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using GMTK2024.scenes;
 using Godot;
+using VertexIO = GMTK2024.scenes.vertex.VertexIO;
 
 namespace GMTK2024.scripts;
 
@@ -22,7 +22,10 @@ public class Recipe(
         Dictionary<Resource, List<VertexIO>> sortedVs = [];
         for (var i = 0; i < siphoningFor.Count; i++) {
             var (res, _) = siphoningFor[i];
-            sortedVs.TryAdd(res, []);
+            sortedVs.TryAdd(
+                res,
+                []
+            );
             sortedVs[res].Add(vs[i]);
         }
 
@@ -34,7 +37,10 @@ public class Recipe(
     ) {
         Dictionary<Resource, int> amounts = [];
         foreach (var (res, amount) in siphoningFor) {
-            amounts.TryAdd(res, 0);
+            amounts.TryAdd(
+                res,
+                0
+            );
             amounts[res] += amount;
         }
 
@@ -65,7 +71,10 @@ public class Recipe(
                 if (v.ConnectedRes == null) {
                     missingInputs.Add(res);
                 } else if (matchedResource == null ||
-                           matchedResource != matched.GetValueOrDefault(res, (Resource) matchedResource)) {
+                           matchedResource != matched.GetValueOrDefault(
+                               res,
+                               (Resource) matchedResource
+                           )) {
                     return false;
                 } else {
                     usedInputs.Add(res);
@@ -91,7 +100,10 @@ public class Recipe(
                 v.Reset();
             } else {
                 var outputResource = this._recipeOutputs[i].Item1;
-                var producedResource = matched.GetValueOrDefault(outputResource, outputResource);
+                var producedResource = matched.GetValueOrDefault(
+                    outputResource,
+                    outputResource
+                );
                 v.SetResource(producedResource);
             }
         }
@@ -109,7 +121,10 @@ public class Recipe(
         var curMin = vertex.AllowedMultiples();
         foreach (var (res, vs) in sortedVs) {
             var total = vs.Sum(v => siphoning ? v.Storage : VertexIO.MaxStorage - v.Storage);
-            curMin = Mathf.Min(curMin, total / amounts[res]);
+            curMin = Mathf.Min(
+                curMin,
+                total / amounts[res]
+            );
         }
 
         return curMin;
@@ -157,17 +172,41 @@ public class Recipe(
     ) {
         // Assume already matched
         // Check for blockage
-        var sortedInputs = _SortIos(inputs, this._recipeInputs);
-        var sortedOutputs = _SortIos(outputs, this._recipeOutputs);
+        var sortedInputs = _SortIos(
+            inputs,
+            this._recipeInputs
+        );
+        var sortedOutputs = _SortIos(
+            outputs,
+            this._recipeOutputs
+        );
 
-        var multiple = Mathf.Min(this._GetMultiple(vertex, sortedInputs, true),
-            this._GetMultiple(vertex, sortedOutputs, false));
+        var multiple = Mathf.Min(
+            this._GetMultiple(
+                vertex,
+                sortedInputs,
+                true
+            ),
+            this._GetMultiple(
+                vertex,
+                sortedOutputs,
+                false
+            )
+        );
         if (multiple == 0) {
             return false;
         }
 
-        var allSiphons = this._GetSiphons(sortedInputs, true, multiple);
-        var allDumps = this._GetSiphons(sortedOutputs, false, multiple);
+        var allSiphons = this._GetSiphons(
+            sortedInputs,
+            true,
+            multiple
+        );
+        var allDumps = this._GetSiphons(
+            sortedOutputs,
+            false,
+            multiple
+        );
         if (allSiphons == null || allDumps == null) {
             return false;
         }

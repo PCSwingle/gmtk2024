@@ -1,20 +1,15 @@
-using GMTK2024.scenes;
 using GMTK2024.scripts.recipes;
+using VertexIO = GMTK2024.scenes.vertex.VertexIO;
 
 namespace GMTK2024.scripts.vertices;
 
 public class Splitter() : VertexType(
     "Splitter",
     Palette.VertexControlColor,
-    [""],
-    ["", ""],
+    ["Input"],
+    ["Output", "Output"],
     [new SplittingRecipe()]
 ) {
-    public static Constructable Constructor = new(
-        "Splitter",
-        () => new Splitter()
-    );
-
     public override int AllowedMultiples() {
         return VertexIO.TransferRate;
     }

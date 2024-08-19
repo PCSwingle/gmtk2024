@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnxyijneggm0e"]
+
+[ext_resource type="Texture2D" uid="uid://8d64eqmeqob5" path="res://sprites/vertex/connection_arrow.png" id="1_006w0"]
+[ext_resource type="Script" path="res://scenes/vertex/ConnectionArrow.cs" id="2_mdxbr"]
+
+[node name="ConnectionArrow" type="Sprite2D"]
+texture = ExtResource("1_006w0")
+script = ExtResource("2_mdxbr")

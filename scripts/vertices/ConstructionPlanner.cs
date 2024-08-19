@@ -1,7 +1,9 @@
 using System;
-using GMTK2024.scenes;
+using System.Collections.Generic;
+using GMTK2024.scenes.vertex;
 using GMTK2024.scripts.recipes;
 using Godot;
+using Command = GMTK2024.scenes.hud.Command;
 
 namespace GMTK2024.scripts.vertices;
 
@@ -11,71 +13,51 @@ public struct Constructable(
 ) {
     public readonly string Name = name;
 
-    public readonly Texture2D ConstructionSprite =
-        ResourceLoader.Load<CompressedTexture2D>($"res://sprites/vertices/{name.ToLower().Replace(" ", "_")}.png");
+    public readonly Texture2D ConstructionSprite = Utils.LoadSprite(
+        name,
+        "vertices"
+    );
 
     public readonly Func<VertexType> VertexConstructor = vertexConstructor;
+
+    public static readonly List<Constructable> ConstructableVertices = [
+        new Constructable(
+            "Splitter",
+            () => new Splitter()
+        ),
+        new Constructable(
+            "Merger",
+            () => new Merger()
+        ),
+        new Constructable(
+            "Construction Planner",
+            () => new ConstructionPlanner()
+        )
+    ];
 }
 
 public class ConstructionPlanner()
     : VertexType(
         "Construction Planner",
-        Palette.ConstructionPlannerColor,
+        Palette.ConstructionColor,
         ["Coin"],
         [],
-        [new ConstructionPlannerCoinRecipe()]
+        [new ConstructionPlannerRecipe()]
     ) {
     private const int MaxProgress = 200;
 
     private static readonly PackedScene ConstructionBodyScene =
-        ResourceLoader.Load<PackedScene>("res://scenes/construction_body.tscn");
+        ResourceLoader.Load<PackedScene>("res://scenes/vertices/construction_planner.tscn");
 
-    public static Constructable Constructor = new(
-        "Construction Planner",
-        () => new Merger()
-    );
-
-    private static readonly Constructable[] ConstructableVertices =
-        [Splitter.Constructor, Merger.Constructor, Constructor];
 
     private Button _acceptButton = null!;
-    private Action _buttonCallback = null!;
-
-    private OptionButton.ItemSelectedEventHandler _callback = null!;
-
     private OptionButton _dropdown = null!;
+    private VertexProgress _progressBar = null!;
 
     private int _progress;
-    private Sprite2D _progressBar = null!;
-
-    private void _UpdateProgress() {
-        var level = Mathf.Clamp(
-            this._progress / (float) MaxProgress,
-            0.0378f,
-            1f
-        );
-        var pixelsMissing = 80 - (int) (level * 80);
-        this._progressBar.Position = new Vector2(
-            this._progressBar.Position.X,
-            4 + pixelsMissing
-        );
-        this._progressBar.RegionRect = new Rect2(
-            new Vector2(
-                this._progressBar.RegionRect.Position.X,
-                pixelsMissing
-            ),
-            new Vector2(
-                this._progressBar.RegionRect.Size.X,
-                80 - pixelsMissing
-            )
-        );
-
-        var color = Palette.IoFillColors[pixelsMissing / 20];
-        this._progressBar.Modulate = color;
-    }
 
     private void _CreateBuilding() {
-        var constructable = ConstructableVertices[this._dropdown.Selected];
+        var constructable = Constructable.ConstructableVertices[this._dropdown.Selected];
         Command.CreateVertex(
             constructable.VertexConstructor(),
             this.VertexNode.Position + new Vector2(
@@ -89,18 +71,16 @@ public class ConstructionPlanner()
         this._dropdown.Selected = -1;
     }
 
-    public override void Create() {
+    public override async void Create() {
         var body = this.VertexNode.GetNode<Control>("VertexBody");
         var treasuryBody = ConstructionBodyScene.Instantiate<Control>();
-        this._progressBar = treasuryBody.GetNode<Sprite2D>("ProgressSprite");
-
+        this._progressBar = treasuryBody.GetNode<VertexProgress>("VertexProgress");
         this._acceptButton = treasuryBody.GetNode<Button>("AcceptButton");
-        this._buttonCallback = this._CreateBuilding;
-        this._acceptButton.Pressed += this._buttonCallback;
+        this._acceptButton.Pressed += this._CreateBuilding;
 
         this._dropdown = treasuryBody.GetNode<OptionButton>("ConstructionDropdown");
-        for (var i = 0; i < ConstructableVertices.Length; i++) {
-            var constructable = ConstructableVertices[i];
+        for (var i = 0; i < Constructable.ConstructableVertices.Count; i++) {
+            var constructable = Constructable.ConstructableVertices[i];
             this._dropdown.AddIconItem(
                 constructable.ConstructionSprite,
                 constructable.Name,
@@ -109,18 +89,17 @@ public class ConstructionPlanner()
         }
 
         this._dropdown.Selected = -1;
-        this._callback = index => {
+        this._dropdown.ItemSelected += index => {
             this._progress = 0;
             this._acceptButton.Disabled = this._progress != MaxProgress || index == -1;
         };
-        this._dropdown.ItemSelected += this._callback;
-        this._UpdateProgress();
         body.AddChild(treasuryBody);
-    }
 
-    public override void Delete() {
-        this._dropdown.ItemSelected -= this._callback;
-        this._acceptButton.Pressed -= this._buttonCallback;
+        await this._progressBar.ToSignal(
+            this._progressBar,
+            Node.SignalName.Ready
+        );
+        this._progressBar.UpdateProgress((float) this._progress / MaxProgress);
     }
 
     public override int AllowedMultiples() {
@@ -138,6 +117,6 @@ public class ConstructionPlanner()
             this._acceptButton.Disabled = false;
         }
 
-        this._UpdateProgress();
+        this._progressBar.UpdateProgress((float) this._progress / MaxProgress);
     }
 }

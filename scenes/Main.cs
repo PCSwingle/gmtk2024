@@ -1,3 +1,5 @@
+using GMTK2024.scenes.hud;
+using GMTK2024.scenes.vertex;
 using Godot;
 
 namespace GMTK2024.scenes;
@@ -34,6 +36,7 @@ public partial class Main : Node2D {
             if (this._remainingTickTime > 2 * TickTime) {
                 GD.PrintErr("Running over 1 tick behind!");
             }
+
             this._remainingTickTime = Mathf.Min(
                 TickTime,
                 this._remainingTickTime - TickTime

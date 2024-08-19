@@ -1,5 +1,5 @@
-using GMTK2024.scenes;
 using Godot;
+using Vertex = GMTK2024.scenes.vertex.Vertex;
 
 namespace GMTK2024.scripts;
 

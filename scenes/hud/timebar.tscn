@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c7gs1plqgv63n"]
+
+[ext_resource type="Texture2D" uid="uid://clssbeh2wvw6c" path="res://sprites/hud/timebar.png" id="1_s18bb"]
+[ext_resource type="Script" path="res://scenes/hud/Timebar.cs" id="2_u26x7"]
+
+[node name="Timebar" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -268.0
+offset_bottom = 48.0
+script = ExtResource("2_u26x7")
+
+[node name="TimebarSprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_s18bb")
+centered = false
+hframes = 7
