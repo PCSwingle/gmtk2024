@@ -25,5 +25,8 @@ public abstract class VertexType(
         return 1;
     }
 
-    public virtual void ProcessSideEffect(int multiple) { }
+    public virtual void ProcessSideEffect(
+        Recipe recipe,
+        int multiple
+    ) { }
 }

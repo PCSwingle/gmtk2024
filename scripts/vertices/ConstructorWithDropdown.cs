@@ -38,12 +38,7 @@ public class ConstructorWithDropdown(
         this.ProgressBar = constructorBody.GetNode<VertexProgress>("VertexProgress");
 
         this.AcceptButton = constructorBody.GetNode<Button>("AcceptButton");
-        this.AcceptButton.Pressed += () => {
-            this.CreateVertex(this._SelectedConstructable());
-            this.Progress = 0;
-            this.AcceptButton.Disabled = true;
-            this.Dropdown.Selected = -1;
-        };
+        this.AcceptButton.Pressed += this.OnBuild;
 
         this.Dropdown = constructorBody.GetNode<OptionButton>("ConstructorDropdown");
         for (var i = 0; i < constructableVertices.Length; i++) {
@@ -73,12 +68,22 @@ public class ConstructorWithDropdown(
             : 0;
     }
 
-    public override void ProcessSideEffect(int multiple) {
+    public override void ProcessSideEffect(
+        Recipe recipe,
+        int multiple
+    ) {
         this.Progress += multiple;
         if (this.Progress == this._SelectedConstructable().RequiredProgress && this.Dropdown.Selected != -1) {
             this.AcceptButton.Disabled = false;
         }
 
         this.ProgressBar.UpdateProgress((float) this.Progress / this._SelectedConstructable().RequiredProgress);
+    }
+
+    protected virtual void OnBuild() {
+        this.CreateVertex(this._SelectedConstructable());
+        this.Progress = 0;
+        this.AcceptButton.Disabled = true;
+        this.Dropdown.Selected = -1;
     }
 }

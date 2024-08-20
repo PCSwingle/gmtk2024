@@ -12,7 +12,7 @@ public partial class VertexIO : Node2D {
     public const int MaxStorage = 100;
     public const int TransferRate = 5;
 
-    private const int AverageWindowLength = 10;
+    private const int AverageWindowLength = 4;
 
     private static VertexIO? _hoveredVertexIo;
 

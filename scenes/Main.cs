@@ -10,7 +10,7 @@ public partial class Main : Node2D {
 
     private const float TickTime = 1f;
     public static Main MainNode = null!;
-    public static Hud HudNode = null!;
+    public static hud.Hud HudNode = null!;
     public static Command CommandNode = null!;
     private float _remainingTickTime;
 

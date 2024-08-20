@@ -12,10 +12,9 @@ public class Recipe(
     private readonly List<(Resource, int)> _recipeInputs = recipeInputs ?? [];
     private readonly List<(Resource, int)> _recipeOutputs = recipeOutputs ?? [];
 
-    private readonly Dictionary<Resource, int> _sortedInputAmounts = _SortAmounts(recipeInputs ?? []);
-    private readonly Dictionary<Resource, int> _sortedOutputAmounts = _SortAmounts(recipeOutputs ?? []);
+    private Dictionary<Resource, (Resource, int)> _matched = [];
 
-    private static Dictionary<Resource, List<VertexIO>> _SortIos(
+    private Dictionary<Resource, List<VertexIO>> _SortIos(
         List<VertexIO> vs,
         List<(Resource, int)> siphoningFor
     ) {
@@ -32,7 +31,7 @@ public class Recipe(
         return sortedVs;
     }
 
-    private static Dictionary<Resource, int> _SortAmounts(
+    private Dictionary<Resource, int> _SortAmounts(
         List<(Resource, int)> siphoningFor
     ) {
         Dictionary<Resource, int> amounts = [];
@@ -41,7 +40,10 @@ public class Recipe(
                 res,
                 0
             );
-            amounts[res] += amount;
+            amounts[res] += amount * this._matched.GetValueOrDefault(
+                res,
+                (res, 1)
+            ).Item2;
         }
 
         return amounts;
@@ -52,7 +54,11 @@ public class Recipe(
         List<VertexIO> outputs
     ) {
         // Check to see if inputs are in order and ensure no extra inputs still connected
-        Dictionary<Resource, Resource> matched = [];
+        if (inputs.Count < this._recipeInputs.Count || outputs.Count < this._recipeOutputs.Count) {
+            return false;
+        }
+
+        this._matched = [];
         List<VertexIO> unusedInputs = [];
         HashSet<Resource> usedInputs = [];
         HashSet<Resource> missingInputs = [];
@@ -65,20 +71,23 @@ public class Recipe(
                     unusedInputs.Add(v);
                 }
             } else {
-                var (res, _) = this._recipeInputs[i];
-                var matchedResource = res.MatchResource(v.ConnectedRes);
+                var (res, amount) = this._recipeInputs[i];
+                var matchedResource = res.MatchResource(
+                    v.ConnectedRes,
+                    amount
+                );
 
                 if (v.ConnectedRes == null) {
                     missingInputs.Add(res);
                 } else if (matchedResource == null ||
-                           matchedResource != matched.GetValueOrDefault(
+                           matchedResource != this._matched.GetValueOrDefault(
                                res,
-                               (Resource) matchedResource
+                               ((Resource, int)) matchedResource
                            )) {
                     return false;
                 } else {
                     usedInputs.Add(res);
-                    matched[res] = (Resource) matchedResource;
+                    this._matched[res] = ((Resource, int)) matchedResource;
                 }
             }
         }
@@ -100,9 +109,9 @@ public class Recipe(
                 v.Reset();
             } else {
                 var outputResource = this._recipeOutputs[i].Item1;
-                var producedResource = matched.GetValueOrDefault(
+                var (producedResource, _) = this._matched.GetValueOrDefault(
                     outputResource,
-                    outputResource
+                    (outputResource, 1)
                 );
                 v.SetResource(producedResource);
             }
@@ -114,10 +123,9 @@ public class Recipe(
     private int _GetMultiple(
         VertexType vertex,
         Dictionary<Resource, List<VertexIO>> sortedVs,
+        Dictionary<Resource, int> amounts,
         bool siphoning
     ) {
-        var amounts = siphoning ? this._sortedInputAmounts : this._sortedOutputAmounts;
-
         var curMin = vertex.AllowedMultiples();
         foreach (var (res, vs) in sortedVs) {
             var total = vs.Sum(v => siphoning ? v.Storage : VertexIO.MaxStorage - v.Storage);
@@ -132,11 +140,10 @@ public class Recipe(
 
     private List<(VertexIO, int)>? _GetSiphons(
         Dictionary<Resource, List<VertexIO>> sortedVs,
+        Dictionary<Resource, int> amounts,
         bool siphoning,
         int multiple
     ) {
-        var amounts = siphoning ? this._sortedInputAmounts : this._sortedOutputAmounts;
-
         List<(VertexIO, int)> allSiphons = [];
         foreach (var res in sortedVs.Keys) {
             // Try to split it evenly, but always give all if possible
@@ -172,24 +179,29 @@ public class Recipe(
     ) {
         // Assume already matched
         // Check for blockage
-        var sortedInputs = _SortIos(
+        var sortedInputs = this._SortIos(
             inputs,
             this._recipeInputs
         );
-        var sortedOutputs = _SortIos(
+        var inputAmounts = this._SortAmounts(this._recipeInputs);
+
+        var sortedOutputs = this._SortIos(
             outputs,
             this._recipeOutputs
         );
+        var outputAmounts = this._SortAmounts(this._recipeOutputs);
 
         var multiple = Mathf.Min(
             this._GetMultiple(
                 vertex,
                 sortedInputs,
+                inputAmounts,
                 true
             ),
             this._GetMultiple(
                 vertex,
                 sortedOutputs,
+                outputAmounts,
                 false
             )
         );
@@ -199,11 +211,13 @@ public class Recipe(
 
         var allSiphons = this._GetSiphons(
             sortedInputs,
+            inputAmounts,
             true,
             multiple
         );
         var allDumps = this._GetSiphons(
             sortedOutputs,
+            outputAmounts,
             false,
             multiple
         );
@@ -220,7 +234,10 @@ public class Recipe(
             v.Storage += amount;
         }
 
-        vertex.ProcessSideEffect(multiple);
+        vertex.ProcessSideEffect(
+            this,
+            multiple
+        );
         return true;
     }
 }

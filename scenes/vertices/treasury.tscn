@@ -9,11 +9,11 @@ mouse_filter = 2
 
 [node name="CoinSprite" type="Sprite2D" parent="."]
 texture = ExtResource("1_xt3ox")
-offset = Vector2(11, 17)
+offset = Vector2(10, 18)
 
 [node name="CoinLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 22.0
-offset_top = 1.0
-offset_right = 62.0
-offset_bottom = 24.0
+offset_left = 20.0
+offset_top = 3.0
+offset_right = 60.0
+offset_bottom = 26.0

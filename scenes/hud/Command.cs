@@ -39,7 +39,8 @@ public partial class Command : Node2D {
         control.GuiInput += this._GuiInput;
 
         this._zoomNode.AddChild(Vertex.CreateVertex(new ResourceProspector()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new Treasury()));
+        this._zoomNode.AddChild(Vertex.CreateVertex(new Treasury(true)));
+        this._zoomNode.AddChild(Vertex.CreateVertex(new Treasury(false)));
         this._zoomNode.AddChild(Vertex.CreateVertex(new LogisticsPlanner()));
         this._zoomNode.AddChild(Vertex.CreateVertex(new ManufacturingIndustry()));
 

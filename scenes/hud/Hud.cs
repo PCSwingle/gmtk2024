@@ -1,7 +1,7 @@
 using GMTK2024.scripts;
 using Godot;
 
-namespace GMTK2024.scenes;
+namespace GMTK2024.scenes.hud;
 
 public partial class Hud : Control {
     [Signal]
@@ -12,7 +12,7 @@ public partial class Hud : Control {
     }
 
     public void UpdateHud() {
-        this.GetNode<Label>("CoinLabel").Text = Game.State.Coins.ToString();
+        this.GetNode<Label>("CoinLabel").Text = (Game.State.Coins / 1000).ToString("0.0") + "k";
         this.EmitSignal(SignalName.OnUpdateHud);
     }
 }

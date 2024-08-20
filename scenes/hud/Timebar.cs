@@ -20,7 +20,8 @@ public partial class Timebar : Control {
     private Time _prevTime = Time.Paused;
 
     public override void _Ready() {
-        this._ChangeTime(Time.FiveX);
+        var startingTime = OS.IsDebugBuild() ? Time.FiveX : Time.OneX;
+        this._ChangeTime(startingTime);
     }
 
     private void _ChangeTime(Time newTime) {
