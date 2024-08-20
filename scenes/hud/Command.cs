@@ -38,11 +38,18 @@ public partial class Command : Node2D {
         var control = this.GetNode<Control>("CommandControl");
         control.GuiInput += this._GuiInput;
 
-        this._zoomNode.AddChild(Vertex.CreateVertex(new ResourceProspector()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new Treasury(true)));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new Treasury(false)));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new LogisticsPlanner()));
-        this._zoomNode.AddChild(Vertex.CreateVertex(new ManufacturingIndustry()));
+        var treasury = Vertex.CreateVertex(new Treasury(false));
+        treasury.Position = new Vector2(
+            -300,
+            -50
+        );
+        var logisticsPlanner = Vertex.CreateVertex(new LogisticsPlanner());
+        logisticsPlanner.Position = new Vector2(
+            200,
+            0
+        );
+        this._zoomNode.AddChild(treasury);
+        this._zoomNode.AddChild(logisticsPlanner);
 
         Main.CommandNode = this;
     }
